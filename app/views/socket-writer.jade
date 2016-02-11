@@ -1,0 +1,27 @@
+extends bootstrap
+append styles
+    // Custom styles for this template
+    link(href='/stylesheets/writer.css', rel='stylesheet')
+append scripts
+    script(src="/js/socket-writer.js")
+
+block body
+    .navbar.navbar-inverse.navbar-fixed-top
+        .container
+            .navbar-header
+                a.navbar-brand
+                    | Nik's Socket Playground
+            .collapse.navbar-collapse
+                ul.nav.navbar-nav
+                    li.active
+                        a(href="#")
+                            | Home
+
+    .container#content
+        .col-md-12
+            .panel.panel-default
+                .panel-heading
+                    h3.panel-title
+                        | Type here
+                .panel-body
+                    textarea(id="niks-text-box" class="form-control" rows="3")

@@ -1,0 +1,9 @@
+#content {
+  top: 100px;
+  position: absolute;
+  width: 100%;
+}
+
+a {
+  color: #00B7FF;
+}
