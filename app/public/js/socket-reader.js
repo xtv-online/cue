@@ -1,6 +1,6 @@
 $(function() {
     console.log('Establishing Socket Connection')
-    var socket = io.connect('http://10.173.38.83:3000');
+    var socket = io.connect(location.host);
     socket.emit('requestData');
 
     socket.on('newContent', function (data) {

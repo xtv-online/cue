@@ -4,7 +4,7 @@ module.exports = function(server) {
     var countdown = 0;
     var flipState = false;
     var scrollPosition = 0;
-    var scrollSpeed = 10;
+    var scrollSpeed = 20;
     var scrollAction;
     var savedCues = {};
 

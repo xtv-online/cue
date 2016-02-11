@@ -1,6 +1,6 @@
 $(function() {
     console.log('Establishing Socket Connection')
-    var socket = io.connect('http://localhost:3000');
+    var socket = io.connect(location.host);
 
     socket.on('currentContent', function (data) {
       $('#niks-text-box').val(data.content)
