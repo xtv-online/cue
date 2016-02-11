@@ -52,7 +52,6 @@ module.exports = function(server) {
         io.emit('newContent', {
             content: text
         });
-        console.log('Send new data', data);
     }
 
     function getDateTime() {
