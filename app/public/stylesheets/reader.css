@@ -1,14 +1,25 @@
-html, body{
-  height:100%;
-  width: 100%;
-  background-color: black;
-}
-
-#content {
-    margin: 50px;
-    color: white;
-    font-size: 50px;
+html, body {
     height: 100%;
+    width: 100%;
+    background-color: black;
+}
+#text {
+    position: absolute;
+    color: white;
+    font-size: 70px;
+    top: 50px;
+    height: 500px;
+    width: 100%;
+    font-family: sans-serif;
+    white-space: pre;
+    white-space: pre-wrap;
+}
+#time {
+    position: absolute;
+    color: white;
+    font-size: 100px;
+    height: 218px;
+    top: 550px;
     width: 100%;
     font-family: sans-serif;
 }
