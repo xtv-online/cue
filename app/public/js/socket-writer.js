@@ -6,6 +6,40 @@ $(function() {
       $('#niks-text-box').val(data.content)
     });
 
+    socket.on('scroll', function(data) {
+        if (data == 'top') {
+            $('#text-preview').scrollTo(0);
+        } else {
+            $('#text-preview').scrollTo(
+                data.position,
+                data.duration,
+                {easing: 'swing'}
+            );
+        }
+    });
+
+    socket.on('scrollButton', function(data) {
+        switch (data) {
+            case 'up':
+                $( "#scroll-text-up" ).addClass('btn-danger');
+                $( "#scroll-text-down" ).removeClass('btn-danger');
+                break;
+            case 'down':
+                $( "#scroll-text-down" ).addClass('btn-danger');
+                $( "#scroll-text-up" ).removeClass('btn-danger');
+                break;
+            case 'stopped':
+                $( "#scroll-text-up" ).removeClass('btn-danger');
+                $( "#scroll-text-down" ).removeClass('btn-danger');
+                break;
+        }
+
+    });
+
+    socket.on('newContent', function (data) {
+        $('#text-preview').html(data.content);
+    });
+
     socket.on('time', function (data) {
         $('.current').text("NOW: " + data.currentText + " | NEXT: " + data.countdownText);
     });
@@ -23,7 +57,45 @@ $(function() {
     });
 
     $( "#flip-image" ).click(function() {
-      socket.emit('options', { value: 'flipImage' });
+      socket.emit('options', { action: 'flipImage' });
+    });
+
+    $( "#scroll-text-down" ).click(function() {
+        var data = {}
+        if ($( '#scroll-text-down' ).hasClass('btn-danger')) {
+            data.action = 'stopScrolling'
+        } else {
+            data.action = 'scrollDown'
+        }
+        socket.emit('options', data);
+    });
+
+    $( "#scroll-speed-increase" ).click(function() {
+        socket.emit('options', {
+            action: 'scrollSpeed',
+            increase: true
+        });
+    });
+
+    $( "#scroll-speed-decrease" ).click(function() {
+        socket.emit('options', {
+            action: 'scrollSpeed',
+            increase: false
+        });
+    });
+
+    $( "#scroll-text-up" ).click(function() {
+        var data = {}
+        if ($( '#scroll-text-up' ).hasClass('btn-danger')) {
+            data.action = 'stopScrolling'
+        } else {
+            data.action = 'scrollUp'
+        }
+        socket.emit('options', data);
+    });
+
+    $( "#scroll-text-top" ).click(function() {
+        socket.emit('options', {action: 'scrollTop'});
     });
 
     $( "#5s" ).click(function() {

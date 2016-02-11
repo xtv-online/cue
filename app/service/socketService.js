@@ -3,6 +3,9 @@ module.exports = function(server) {
     var text = '';
     var countdown = 0;
     var flipState = false;
+    var scrollPosition = 0;
+    var scrollSpeed = 10;
+    var scrollAction;
 
     io.on('connection', function(socket) {
         io.emit('options', {
@@ -24,12 +27,39 @@ module.exports = function(server) {
         });
 
         socket.on('options', function(data) {
-            switch (data.value) {
+            switch (data.action) {
                 case 'flipImage':
                     flipState = !flipState;
                     io.emit('options', {
                         mirror: flipState
                     });
+                    break;
+                case 'scrollDown':
+                    clearInterval(scrollAction);
+                    startScrolling('down');
+                    io.emit('scrollButton', 'down');
+                    break;
+                case 'scrollUp':
+                    clearInterval(scrollAction);
+                    startScrolling('up');
+                    io.emit('scrollButton', 'up');
+                    break;
+                case 'scrollTop':
+                    scrollPosition = 0;
+                    clearInterval(scrollAction);
+                    io.emit('scrollButton', 'stopped');
+                    io.emit('scroll', 'top');
+                    break;
+                case 'stopScrolling':
+                    clearInterval(scrollAction);
+                    io.emit('scrollButton', 'stopped');
+                    break;
+                case 'scrollSpeed':
+                    if (data.increase) {
+                        scrollSpeed = scrollSpeed + 5;
+                    } else if (scrollSpeed > 5) {
+                        scrollSpeed = scrollSpeed - 5;
+                    }
                     break;
             }
         });
@@ -53,6 +83,21 @@ module.exports = function(server) {
             content: text
         });
     }
+
+    function startScrolling(direction) {
+        io.emit('scroll', {
+            position: scrollPosition + 'px',
+            duration: 200
+        });
+        scrollAction = setInterval(function(){
+            scrollPosition = (direction == 'down') ? (scrollPosition + scrollSpeed) : (scrollPosition - scrollSpeed);
+            io.emit('scroll', {
+                position: scrollPosition + 'px',
+                duration: 200
+            });
+        }, 200);
+    }
+
 
     function getDateTime() {
         var date = new Date();

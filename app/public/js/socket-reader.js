@@ -1,12 +1,25 @@
 $(function() {
     console.log('Establishing Socket Connection')
-    var socket = io.connect('http://localhost:3000');
+    var socket = io.connect('http://10.173.38.83:3000');
     socket.emit('requestData');
+
     socket.on('newContent', function (data) {
         $('#text').html(data.content);
     });
     socket.on('time', function (data) {
         $('#time').html("NOW: " + data.currentText + "<br />NEXT: " + data.countdownText);
+    });
+
+    socket.on('scroll', function(data) {
+        if (data == 'top') {
+            $('#text').scrollTo(0);
+        } else {
+            $('#text').scrollTo(
+                data.position,
+                data.duration,
+                {easing: 'swing'}
+            );
+        }
     });
 
     socket.on('options', function (data) {
