@@ -44,6 +44,14 @@ $(function() {
         $('.current').text("NOW: " + data.currentText + " | NEXT: " + data.countdownText);
     });
 
+    socket.on('cueList', function (data) {
+        $('#cue-list').html("");
+        for (var cueTitle in data) {
+            $('#cue-list').append('<tr><td>' + cueTitle + '</td><td><button value="' + data[cueTitle] + '" class="btn btn-default load-cue">Load</button></td><td><button value="' + cueTitle + '" class="btn btn-default delete-cue">Delete</button></td></tr>');
+            console.log('Got new cues', cueTitle, data[cueTitle]);
+        }
+    });
+
     socket.on('options', function (data) {
         if (data.mirror) {
             $('#flip-image').addClass('btn-success');
@@ -54,6 +62,27 @@ $(function() {
 
     $('#niks-text-box').on('input', function(){
       socket.emit('textBoxUpdate', { content: $('#niks-text-box').val() });
+    });
+
+    $('#cue-list').on('click', '.load-cue', function(){
+        $('#niks-text-box').val($(this).val());
+        $('#title-name').val('');
+        socket.emit('textBoxUpdate', { content: $('#niks-text-box').val() });
+    });
+
+    $('#cue-list').on('click', '.delete-cue', function(){
+        socket.emit('deleteCue', {
+            title: $(this).val()
+        });
+    });
+
+    $('#save-cue').click(function(){
+      console.log('saving cue', $('#title-name').val());
+      var cueData = {
+          title: $('#title-name').val(),
+          content: $('#niks-text-box').val()
+      };
+      socket.emit('saveCue', cueData);
     });
 
     $( "#flip-image" ).click(function() {

@@ -6,6 +6,7 @@ module.exports = function(server) {
     var scrollPosition = 0;
     var scrollSpeed = 10;
     var scrollAction;
+    var savedCues = {};
 
     io.on('connection', function(socket) {
         io.emit('options', {
@@ -17,9 +18,20 @@ module.exports = function(server) {
         io.emit('newContent', {
             content: text
         });
-
+        sendCueList();
         socket.on('textBoxUpdate', function(data) {
             messageUpdate(data);
+        });
+
+        socket.on('saveCue', function(data) {
+            savedCues[data.title] = data.content;
+            sendCueList();
+        });
+
+        socket.on('deleteCue', function(data) {
+            console.log('deleting cue', data.title);
+            delete savedCues[data.title];
+            sendCueList();
         });
 
         socket.on('setCountdown', function(data) {
@@ -89,7 +101,7 @@ module.exports = function(server) {
             position: scrollPosition + 'px',
             duration: 200
         });
-        scrollAction = setInterval(function(){
+        scrollAction = setInterval(function() {
             scrollPosition = (direction == 'down') ? (scrollPosition + scrollSpeed) : (scrollPosition - scrollSpeed);
             io.emit('scroll', {
                 position: scrollPosition + 'px',
@@ -116,13 +128,17 @@ module.exports = function(server) {
 
     function getCountdown() {
         var now = Date.now()
-        var difference = (countdown - now)/1000;
+        var difference = (countdown - now) / 1000;
         if (difference > 0) {
-            var min = Math.floor(difference/60);
-            var sec = Math.round((difference - min*60)*10)/10;
-            return ((min < 10) ? '0' + min : min) + ":" + ((sec < 10) ? '0' + sec : sec) ;
+            var min = Math.floor(difference / 60);
+            var sec = Math.round((difference - min * 60) * 10) / 10;
+            return ((min < 10) ? '0' + min : min) + ":" + ((sec < 10) ? '0' + sec : sec);
         } else {
             return '0';
         }
+    }
+
+    function sendCueList() {
+        io.emit('cueList', savedCues)
     }
 }
