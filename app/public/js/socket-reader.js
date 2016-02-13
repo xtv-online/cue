@@ -1,5 +1,6 @@
 $(function() {
-    console.log('Establishing Socket Connection')
+    var mirror = false;
+    console.log('Establishing Socket Connection');
     var socket = io.connect(location.host);
     socket.emit('requestData');
 
@@ -22,8 +23,46 @@ $(function() {
         }
     });
 
-    socket.on('options', function (data) {
-        if (data.mirror) {
+    $('body').on({ 'touchstart' : function(){
+        mirror = !mirror;
+        if (mirror) {
+            $('#text').css({
+              '-webkit-transform' : 'scale(-1, 1)',
+              '-moz-transform'    : 'scale(-1, 1)',
+              '-ms-transform'     : 'scale(-1, 1)',
+              '-o-transform'      : 'scale(-1, 1)',
+              'transform'         : 'scale(-1, 1)'
+            });
+            $('#time').css({
+              '-webkit-transform' : 'scale(-1, 1)',
+              '-moz-transform'    : 'scale(-1, 1)',
+              '-ms-transform'     : 'scale(-1, 1)',
+              '-o-transform'      : 'scale(-1, 1)',
+              'transform'         : 'scale(-1, 1)'
+            });
+        }
+        else {
+            $('#text').css({
+              '-webkit-transform' : 'scale(1, 1)',
+              '-moz-transform'    : 'scale(1, 1)',
+              '-ms-transform'     : 'scale(1, 1)',
+              '-o-transform'      : 'scale(1, 1)',
+              'transform'         : 'scale(1, 1)'
+            });
+            $('#time').css({
+              '-webkit-transform' : 'scale(1, 1)',
+              '-moz-transform'    : 'scale(1, 1)',
+              '-ms-transform'     : 'scale(1, 1)',
+              '-o-transform'      : 'scale(1, 1)',
+              'transform'         : 'scale(1, 1)'
+            });
+        }
+    }});
+
+
+    $('body').on('click', function(){
+        mirror = !mirror;
+        if (mirror) {
             $('#text').css({
               '-webkit-transform' : 'scale(-1, 1)',
               '-moz-transform'    : 'scale(-1, 1)',

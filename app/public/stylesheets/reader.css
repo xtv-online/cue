@@ -6,16 +6,16 @@ html, body {
 #text {
     background-color: black;
     position: absolute;
-    line-height: 75px;
+    line-height: 85px;
+    font-size: 80px;
     color: white;
-    font-size: 70px;
     top: 165px;
-    height: 330px;
-    width: 740px;
-    font-family: sans-serif;
+    height: 500px;
+    width: 1000px;
+    font-family: Arial, sans-serif;
     white-space: pre;
     white-space: pre-wrap;
-    overflow: scroll;
+    overflow: hidden;
     border-color: white;
     border-width: 1px;
     border-style: solid;
@@ -27,7 +27,7 @@ html, body {
     line-height: 80px;
     height: 160px;
     top: 5px;
-    width: 740px;
+    width: 1000px;
     font-family: sans-serif;
     border-color: white;
     border-width: 1px;
