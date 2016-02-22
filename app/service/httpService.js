@@ -55,7 +55,7 @@ app.use(function(err, req, res, next) {
   });
 });
 
-var port = normalisePort(process.env.PORT || '80');
+var port = normalisePort(process.env.PORT || '8080');
 app.set('port', port);
 
 /**

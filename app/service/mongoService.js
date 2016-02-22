@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
+var Schema = mongoose.Schema;
+
+mongoose.connect('mongodb://localhost/cue');
 
 var user = mongoose.model(
     'User', {
@@ -37,10 +39,10 @@ var cue = mongoose.model(
 var display = mongoose.model(
     'Display', {
         name: String,
-        resolution-x: Number,
-        resolution-y: Number,
-        colour-background: String,
-        colour-text: String
+        resolutionX: Number,
+        resolutionY: Number,
+        colourBackground: String,
+        colourText: String
     }
 );
 

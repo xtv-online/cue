@@ -17,13 +17,6 @@ module.exports = function(server) {
                     console.log('Could not authenticate', user.username, 'on', socket.id);
                 };
             })
-
-            checkAuthToken(data.token, function(err, success) {
-                if (!err && success) {
-                    console.log('Authenticated socket', socket.id);
-                    socket.auth = true;
-                }
-            });
         });
 
         setTimeout(function() {
@@ -33,7 +26,7 @@ module.exports = function(server) {
                 socket.disconnect('unauthorized');
             }
         }, 1000);
-    }
+    });
     // io.on('connection', function(socket) {
     //     io.emit('options', {
     //         mirror: flipState
