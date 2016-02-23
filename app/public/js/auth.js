@@ -27,7 +27,7 @@ $(function() {
         var newDisplay = {
             displayName: $('#display-name').val(),
             displayResolutionX: $('#display-resolution-x').val(),
-            displayResolutionY: $('#display-resolution-x').val(),
+            displayResolutionY: $('#display-resolution-y').val(),
             displayColourBackground: $('#display-colour-background').val(),
             displayColourText: $('#display-colour-text').val(),
         };
@@ -48,6 +48,12 @@ $(function() {
         socket.emit('deleteDevice', deviceId);
     });
 
+    $('#device-list').on('click', '.set-device', function(){
+        var deviceId = $(this).val();
+        console.log('Setting display', deviceId);
+        socket.emit('setDisplay', deviceId);
+    });
+
 
     // LISTENERS
 
@@ -63,6 +69,8 @@ $(function() {
         user = userData.user;
         $('#programme-list').html("");
         $('#device-list').html("");
+        $('#preview-body').css("height", "auto");
+        $('#preview-body').html("");
         // empty rest
         user.programmes.forEach(function(programmeId) {
             socket.emit('getProgramme', programmeId);
@@ -70,6 +78,7 @@ $(function() {
         user.display.devices.forEach(function(deviceId) {
             socket.emit('getDevice', deviceId);
         });
+        if (user.display.selected) {socket.emit('getDisplay', user.display.selected)};
     });
 
     socket.on('programme', function(programmeData) {
@@ -79,6 +88,12 @@ $(function() {
 
     socket.on('device', function(deviceData) {
         console.log('Got device data', deviceData);
-        $('#device-list').append('<tr><td>' + deviceData['name'] + '</td><td><button value="' + deviceData['_id'] + '" class="btn btn-default load-device">Set</button></td><td><button value="' + deviceData['_id'] + '" class="btn btn-default delete-device">Delete</button></td></tr>');
+        $('#device-list').append('<tr><td>' + deviceData['name'] + '</td><td><button value="' + deviceData['_id'] + '" class="btn btn-default set-device">Set</button></td><td><button value="' + deviceData['_id'] + '" class="btn btn-default delete-device">Delete</button></td></tr>');
     })
+
+    socket.on('display', function(displayData) {
+        console.log('Got display', displayData);
+        $('#preview-body').css('height', (displayData.resolutionY + 4));
+        $('#preview-body').html('<div style="position:absolute;top:40px;bottom:2px;width:' + displayData.resolutionX + 'px;height:' + displayData.resolutionY + 'px;background-color:' + displayData.colourBackground + ';color:' + displayData.colourText + ';">');
+    });
 });

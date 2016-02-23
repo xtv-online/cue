@@ -1,6 +1,6 @@
 extends bootstrap
 append styles
-    link(href='/stylesheets/writer.css', rel='stylesheet')
+    link(href='/stylesheets/auth.css', rel='stylesheet')
 append scripts
     script(src="/js/auth.js")
 
@@ -73,3 +73,9 @@ block body
                         button(class="btn btn-default" id="save-display")
                             | Save
                         table(class="table table-striped" id="device-list")
+            .col-md-12
+                .panel.panel-default
+                    .panel-heading
+                        h3.panel-title
+                            | Preview
+                    .panel-body#preview-body

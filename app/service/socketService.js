@@ -62,6 +62,15 @@ module.exports = function(server) {
             }
         });
 
+        socket.on('setDisplay', function(deviceId) {
+            if (socket.auth) {
+                console.log('Setting current display to', deviceId, 'for', user.username);
+                user.display.selected = deviceId;
+                user.save();
+                startup();
+            }
+        });
+
         socket.on('deleteProgramme', function(programmeId){
             if (socket.auth) {
                 console.log('Deleting programme', programmeId, 'by', user.username);
@@ -107,7 +116,6 @@ module.exports = function(server) {
             if (socket.auth) {
                 console.log('Getting programme', programmeId, 'for', user.username);
                 db.programme.findOne({_id: programmeId}).then(function (programme) {
-                    console.log(programme);
                     socket.emit('programme', programme);
                 });
             };
@@ -116,9 +124,17 @@ module.exports = function(server) {
         socket.on('getDevice', function(deviceId) {
             if (socket.auth) {
                 console.log('Getting device', deviceId, 'for', user.username);
+                db.display.findOne({_id: deviceId}).then(function (deviceData) {
+                    socket.emit('device', deviceData);
+                });
+            }
+        });
+
+        socket.on('getDisplay', function(deviceId) {
+            if (socket.auth) {
+                console.log('Getting display', deviceId, 'for', user.username);
                 db.display.findOne({_id: deviceId}).then(function (device) {
-                    console.log(device);
-                    socket.emit('device', device);
+                    socket.emit('display', device);
                 });
             }
         });
