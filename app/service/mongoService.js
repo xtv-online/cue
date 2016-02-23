@@ -23,8 +23,8 @@ var programme = mongoose.model(
         deleted: Boolean,
         cues: [Schema.Types.ObjectId],
         activeCue: Schema.Types.ObjectId,
-        scrollSpeed: Number,
-        scrollPosition: Number
+        scrollSpeed: { type: Number, default: 20 },
+        scrollPosition: { type: Number, default: 0 },
     }
 );
 
@@ -42,7 +42,8 @@ var display = mongoose.model(
         resolutionX: Number,
         resolutionY: Number,
         colourBackground: String,
-        colourText: String
+        colourText: String,
+        user: Schema.Types.ObjectId
     }
 );
 

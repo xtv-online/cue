@@ -6,26 +6,130 @@ module.exports = function(server) {
     io.on('connection', function(socket) {
         socket.auth = false;
         var user;
+        var data;
 
         socket.on('authenticate', function(data) {
-            db.user.findOne({ 'username': data.username }).then(function(user) {
-                if (passwordHash.verify(data.password, user.password)) {
-                    console.log('Authenticated socket ', socket.id);
+            db.user.findOne({ 'username': data.username }).then(function(userData) {
+                if (passwordHash.verify(data.password, userData.password)) {
                     socket.auth = true;
-                    user = user.username;
+                    user = userData;
+                    console.log('Authenticated socket', socket.id, 'for', user.username);
+                    socket.emit('authenticate', {
+                        status: 'success',
+                        username: userData.username
+                    });
+                    startup();
                 } else {
+                    socket.auth = false;
                     console.log('Could not authenticate', user.username, 'on', socket.id);
+                    socket.emit('authenticate', {
+                        status: 'failure'
+                    });
                 };
             })
         });
 
-        setTimeout(function() {
-            //If the socket didn't authenticate, disconnect it
-            if (!socket.auth) {
-                console.log('Disconnecting socket', socket.id);
-                socket.disconnect('unauthorized');
+        socket.on('addProgramme', function(data) {
+            if (socket.auth) {
+                console.log('Saving new programme', data.programmeName, 'for', user.username);
+                var programme = new db.programme({
+                    programme: data.programmeName,
+                    owner: user.id,
+                    users: [user.id]
+                });
+                programme.save();
+                user.programmes.push(programme.id);
+                user.save();
+                startup();
             }
-        }, 1000);
+        });
+
+        socket.on('addDisplay', function(data) {
+            if (socket.auth) {
+                console.log('Saving new display', data.displayName, 'for', user.username);
+                var display = new db.display({
+                    name: data.displayName,
+                    resolutionX: data.displayResolutionX,
+                    resolutionY: data.displayResolutionY,
+                    colourBackground: data.displayColourBackground,
+                    colourText: data.displayColourText,
+                    user: user.id
+                });
+                display.save();
+                user.display.devices.push(display.id);
+                user.save();
+                startup();
+            }
+        });
+
+        socket.on('deleteProgramme', function(programmeId){
+            if (socket.auth) {
+                console.log('Deleting programme', programmeId, 'by', user.username);
+                db.programme.findOne({_id: programmeId}).then(function (programme) {
+                    programme.users.forEach(function(userId) {
+                        db.user.findOne({_id: userId}).then(function (userData) {
+                            var oldIndex = userData.programmes.indexOf(programmeId);
+                            userData.programmes.splice(oldIndex, 1);
+                            userData.save();
+                            if (userData.id == user.id) {
+                                user = userData;
+                                console.log('Saving user..', user);
+                                startup()
+                            }
+                        });
+                    });
+                });
+                db.programme.findByIdAndRemove(programmeId).exec();
+            };
+        });
+
+        socket.on('deleteDevice', function(deviceId){
+            if (socket.auth) {
+                console.log('Deleting device', deviceId, 'by', user.username);
+                db.display.findOne({_id: deviceId}).then(function (display) {
+                    db.user.findOne({_id: display.user}).then(function (userData) {
+                        var oldIndex = userData.display.devices.indexOf(deviceId);
+                        userData.display.devices.splice(oldIndex, 1);
+                        userData.display.selected = "";
+                        userData.save();
+                        if (userData.id == user.id) {
+                            user = userData;
+                            console.log('Saving user..', user);
+                            startup()
+                        }
+                    });
+                });
+                db.display.findByIdAndRemove(deviceId).exec();
+            };
+        });
+
+        socket.on('getProgramme', function(programmeId) {
+            if (socket.auth) {
+                console.log('Getting programme', programmeId, 'for', user.username);
+                db.programme.findOne({_id: programmeId}).then(function (programme) {
+                    console.log(programme);
+                    socket.emit('programme', programme);
+                });
+            };
+        });
+
+        socket.on('getDevice', function(deviceId) {
+            if (socket.auth) {
+                console.log('Getting device', deviceId, 'for', user.username);
+                db.display.findOne({_id: deviceId}).then(function (device) {
+                    console.log(device);
+                    socket.emit('device', device);
+                });
+            }
+        });
+
+        function startup() {
+            if (socket.auth) {
+                socket.emit('reload', {
+                    user: user
+                });
+            }
+        };
     });
     // io.on('connection', function(socket) {
     //     io.emit('options', {

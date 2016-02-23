@@ -5,20 +5,71 @@ append scripts
     script(src="/js/auth.js")
 
 block body
+
+    .modal.fade#logInModal(tabindex="-1", role="dialog", data-keyboard="false")
+        .modal-dialog(role="document")
+            .modal-content
+                .modal-header
+                    | Login
+                .modal-body
+                    .form-group
+                        label
+                            | Username
+                        input(type="text" class="form-control" id="username")
+                    .form-group
+                        label
+                            | Password
+                        input(type="password" class="form-control" id="password")
+                .modal-footer
+                    button(class="btn btn-default" id="login")
+                        | Log In
     .container#content
         .col-md-12
             .panel.panel-default
                 .panel-heading
                     h3.panel-title
-                        | Log In
-                .panel-body
-                    .form-group
-                        label()
-                            | Username
-                        input(type="text" class="form-control" id="username")
-                    .form-group
-                        label()
-                            | Password
-                        input(type="password" class="form-control" id="password")
-                    button(class="btn btn-default" id="login")
-                        | Save
+                        | Programmes
+                .panel-body#welcome-body
+                    | Please Log In
+            .col-md-6
+                .panel.panel-default
+                    .panel-heading
+                        h3.panel-title
+                            | Programmes
+                    .panel-body#programme-body
+                        .form-group
+                            label
+                                | Add new programme
+                            input(type="text" class="form-control" id="new-programme")
+                        button(class="btn btn-default" id="save-programme")
+                            | Save
+                        table(class="table table-striped" id="programme-list")
+            .col-md-6
+                .panel.panel-default
+                    .panel-heading
+                        h3.panel-title
+                            | Displays
+                    .panel-body#display-body
+                        .form-group
+                            label
+                                | Name
+                            input(type="text" class="form-control" id="display-name")
+                        .form-group
+                            label
+                                | Resolution Width
+                            input(type="number" class="form-control" id="display-resolution-x")
+                        .form-group
+                            label
+                                | Resolution Height
+                            input(type="number" class="form-control" id="display-resolution-y")
+                        .form-group
+                            label
+                                | Background Colour
+                            input(type="string" class="form-control" id="display-colour-background")
+                        .form-group
+                            label
+                                | Text Colour
+                            input(type="string" class="form-control" id="display-colour-text")
+                        button(class="btn btn-default" id="save-display")
+                            | Save
+                        table(class="table table-striped" id="device-list")
