@@ -1,6 +1,9 @@
 module.exports = function(server) {
     var io = require('socket.io')(server);
-    var db = require('./mongoService');
+    var db = require('./persistenceService');
+    // TODO:
+    // Convert all the mongoos queries to thinky queries
+    // And make use of the model's relations and integrated JOINs
     var passwordHash = require('password-hash');
 
     io.on('connection', function(socket) {
@@ -9,7 +12,7 @@ module.exports = function(server) {
         var data;
 
         socket.on('authenticate', function(data) {
-            db.user.findOne({ 'username': data.username }).then(function(userData) {
+            db.User.get({ 'username': data.username }).then(function(userData) {
                 if (passwordHash.verify(data.password, userData.password)) {
                     socket.auth = true;
                     user = userData;
